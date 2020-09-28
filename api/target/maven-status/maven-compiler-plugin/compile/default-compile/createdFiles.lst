@@ -1,0 +1,8 @@
+org/openmrs/module/hl7messagebuilder/api/model/PatientDemographic.class
+org/openmrs/module/hl7messagebuilder/Item.class
+org/openmrs/module/hl7messagebuilder/Hl7messagebuilderConfig.class
+org/openmrs/module/hl7messagebuilder/api/dao/Hl7messagebuilderDao.class
+org/openmrs/module/hl7messagebuilder/Hl7messagebuilderActivator.class
+org/openmrs/module/hl7messagebuilder/api/Hl7messagebuilderService.class
+org/openmrs/module/hl7messagebuilder/api/db/Hl7messagebuilderDAO.class
+org/openmrs/module/hl7messagebuilder/api/impl/Hl7messagebuilderServiceImpl.class

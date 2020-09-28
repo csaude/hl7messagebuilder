@@ -1,0 +1,5 @@
+org/openmrs/module/hl7messagebuilder/extension/html/AdminList.class
+org/openmrs/module/hl7messagebuilder/web/controller/Hl7messagebuilderController.class
+org/openmrs/module/hl7messagebuilder/generator/AdtMessageFactory.class
+org/openmrs/module/hl7messagebuilder/generator/OurAdtA04MessageBuilder.class
+org/openmrs/module/hl7messagebuilder/generator/Hl7SchedulerTask.class
