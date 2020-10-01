@@ -11,4 +11,26 @@
 	<packaging>jar</packaging>
 	<name>Hl7messagebuilder API</name>
 	<description>API project for Hl7messagebuilder</description>
+
+	<dependencies>
+		<dependency>
+			<groupId>org.openmrs.api</groupId>
+			<artifactId>openmrs-api</artifactId>
+			<version>1.11.6</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.openmrs.api</groupId>
+			<artifactId>openmrs-api</artifactId>
+			<version>1.11.6</version>
+			<type>test-jar</type>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.openmrs.test</groupId>
+			<artifactId>openmrs-test</artifactId>
+			<type>pom</type>
+			<version>1.11.6</version>
+		</dependency>
+	</dependencies>
 </project>
