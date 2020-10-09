@@ -6,14 +6,14 @@ import java.util.List;
 import org.openmrs.module.hl7messagebuilder.api.model.PatientDemographic;
 
 import ca.uhn.hl7v2.HL7Exception;
-import ca.uhn.hl7v2.model.v23.message.ADT_A04;
+import ca.uhn.hl7v2.model.v25.message.ADT_A24;
 
 /**
  * @author machabane
  */
 public class AdtMessageFactory {
 	
-	public static List<ADT_A04> createMessage(String messageType, List<PatientDemographic> demographics)
+	public static List<ADT_A24> createMessage(String messageType, List<PatientDemographic> demographics)
 	        throws HL7Exception, IOException {
 		
 		if (messageType.equals("A04")) {

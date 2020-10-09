@@ -10,22 +10,21 @@ import org.openmrs.module.hl7messagebuilder.api.model.PatientDemographic;
 
 import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.model.DataTypeException;
-import ca.uhn.hl7v2.model.v23.datatype.XAD;
-import ca.uhn.hl7v2.model.v23.datatype.XPN;
-import ca.uhn.hl7v2.model.v23.message.ADT_A04;
-import ca.uhn.hl7v2.model.v23.segment.MSH;
-import ca.uhn.hl7v2.model.v23.segment.NK1;
-import ca.uhn.hl7v2.model.v23.segment.PID;
-import ca.uhn.hl7v2.model.v23.segment.PV1;
+import ca.uhn.hl7v2.model.v25.datatype.XAD;
+import ca.uhn.hl7v2.model.v25.datatype.XPN;
+import ca.uhn.hl7v2.model.v25.message.ADT_A24;
+import ca.uhn.hl7v2.model.v25.segment.MSH;
+import ca.uhn.hl7v2.model.v25.segment.PID;
+import ca.uhn.hl7v2.model.v25.segment.PV1;
 
 /**
  * @author machabane
  */
 public class OurAdtA04MessageBuilder {
 	
-	private ADT_A04 _adtMessage;
+	private ADT_A24 _adtMessage;
 	
-	public List<ADT_A04> Build(List<PatientDemographic> demographicss) throws HL7Exception, IOException {
+	public List<ADT_A24> Build(List<PatientDemographic> demographicss) throws HL7Exception, IOException {
 		
 		String currentDateTimeString = getCurrentTimeStamp();
 		
@@ -42,14 +41,14 @@ public class OurAdtA04MessageBuilder {
 		demographics.add(demographic2);
 		demographics.add(demographic3);
 		
-		List<ADT_A04> adt_A04s = new ArrayList<ADT_A04>();
+		List<ADT_A24> adt_A04s = new ArrayList<ADT_A24>();
 		
 		for (PatientDemographic demographic : demographics) {
-			_adtMessage = new ADT_A04();
-			_adtMessage.initQuickstart("ADT", "A04", "P");
+			_adtMessage = new ADT_A24();
+			_adtMessage.initQuickstart("ADT", "A24", "P");
 			createMshSegment(currentDateTimeString, demographic);
 			createPidSegment(demographic);
-			createNk1Segment(demographic);
+			//createNk1Segment(demographic);
 			createPv1Segment(demographic);
 			adt_A04s.add(_adtMessage);
 		}
@@ -69,42 +68,42 @@ public class OurAdtA04MessageBuilder {
 		mshSegment.getSendingFacility().getNamespaceID().setValue("XYZ Centro de Saude");
 		mshSegment.getReceivingApplication().getNamespaceID().setValue("DISA*LAB");
 		mshSegment.getReceivingFacility().getNamespaceID().setValue("***");
-		mshSegment.getDateTimeOfMessage().getTimeOfAnEvent().setValue(currentDateTimeString);
+		mshSegment.getDateTimeOfMessage().getTime().setValue(currentDateTimeString);
 		mshSegment.getMessageControlID().setValue(getSequenceNumber());
-		mshSegment.getVersionID().setValue("2.5.1");
+		mshSegment.getVersionID().getVersionID().setValue("2.5.1");
 	}
 	
 	private void createPidSegment(PatientDemographic demographic) throws DataTypeException {
 		PID pid = _adtMessage.getPID();
 		XPN patientName = pid.getPatientName(0);
-		patientName.getFamilyName().setValue(demographic.getFamilyName());
+		patientName.getFamilyName().getFn1_Surname().setValue(demographic.getFamilyName());
 		patientName.getGivenName().setValue(demographic.getGivenName());
-		pid.getDateOfBirth().getTimeOfAnEvent().setValue(demographic.getBirthDate());
-		pid.getSex().setValue(demographic.getGender());
-		pid.getPatientIDExternalID().getID().setValue(demographic.getPid());
-		pid.getMaritalStatus(0).setValue(demographic.getMaritalStatus());
+		pid.getDateTimeOfBirth().getTime().setValue(demographic.getBirthDate());
+		pid.getAdministrativeSex().setValue(demographic.getGender());
+		pid.getPatientID().getIDNumber().setValue(demographic.getPid());
+		pid.getMaritalStatus().getText().setValue(demographic.getMaritalStatus());
 		XAD patientAddress = pid.getPatientAddress(0);
-		patientAddress.getStreetAddress().setValue(demographic.getAddress());
+		patientAddress.getStreetAddress().getStreetName().setValue(demographic.getAddress());
 		patientAddress.getCity().setValue(demographic.getCountryDistrict());
 		patientAddress.getStateOrProvince().setValue(demographic.getStateProvince());
 		patientAddress.getCountry().setValue(demographic.getCountry());
 	}
 	
-	private void createNk1Segment(PatientDemographic demographic) throws DataTypeException {
+	/*private void createNk1Segment(PatientDemographic demographic) throws DataTypeException {
 		NK1 nk1 = _adtMessage.getNK1();
 		nk1.getSetIDNextOfKin().setValue("1");
 		nk1.getNKName(0).getFamilyName().setValue("Machabane");
 		nk1.getNKName(0).getGivenName().setValue("Helio");
 		nk1.getNk13_Relationship().getCe1_Identifier().setValue("EMC");
-	}
+	}*/
 	
 	private void createPv1Segment(PatientDemographic demographic) throws DataTypeException {
 		PV1 pv1 = _adtMessage.getPV1();
-		pv1.getSetIDPatientVisit().setValue("1");
+		pv1.getSetIDPV1().setValue("1");
 		pv1.getPatientClass().setValue("O");
-		pv1.getAssignedPatientLocation().getPl9_LocationType().setValue("Centro de Saude de Chabeco");
+		pv1.getAssignedPatientLocation().getPl9_LocationDescription().setValue("Centro de Saude de Chabeco");
 		pv1.getAdmissionType().setValue("R");
-		pv1.getAdmitDateTime().getTimeOfAnEvent().setValue("20200728");
+		pv1.getAdmitDateTime().getTime().setValue("20200728");
 		
 	}
 	
