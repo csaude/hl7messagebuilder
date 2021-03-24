@@ -5,9 +5,15 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.ArrayList;
 import java.util.List;
 
+import org.openmrs.api.context.Context;
+import org.openmrs.module.hl7messagebuilder.api.Hl7messagebuilderService;
 import org.openmrs.module.hl7messagebuilder.api.model.PatientDemographic;
+import org.openmrs.module.hl7messagebuilder.util.Constants;
+import org.openmrs.module.hl7messagebuilder.util.Util;
+import org.openmrs.scheduler.tasks.AbstractTask;
 
 import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.model.v25.message.ADT_A24;
@@ -17,20 +23,21 @@ import ca.uhn.hl7v2.parser.PipeParser;
 /**
  * @author machabane
  */
-public class Hl7SchedulerTask /*extends AbstractTask*/ {
+public class Hl7SchedulerTask extends AbstractTask {
 	
-	//private static HapiContext context = new DefaultHapiContext();
+	private String headers;
 	
-	//private Hl7messagebuilderService hl7messagebuilderService;
+	private String footers;
 	
-	private static List<PatientDemographic> demographics;
+	private Hl7messagebuilderService hl7messagebuilderService;
 	
-	/*public Hl7SchedulerTask() {
+	private List<PatientDemographic> demographics = new ArrayList<PatientDemographic>();
+	
+	public Hl7SchedulerTask() {
 		hl7messagebuilderService = Context.getService(Hl7messagebuilderService.class);
 		demographics = hl7messagebuilderService.getPatientDemographicData();
-	}*/
+	}
 	
-	/*@Override
 	public void execute() {
 		try {
 			Context.openSession();
@@ -40,34 +47,34 @@ public class Hl7SchedulerTask /*extends AbstractTask*/ {
 		catch (Exception e) {
 			e.printStackTrace();
 		}
-	}*/
-	
-	public static void main(String[] args) throws HL7Exception, IOException { 
-		createHl7File();
 	}
 	
-	private static void createHl7File() throws HL7Exception, IOException {
+	private void createHl7File() throws HL7Exception, IOException {
+		
+		String currentTimeStamp = Util.getCurrentTimeStamp();
+		
+		// prepare the headers
+		headers = "FHS|^~\\&|XYZSYS|XYZ " + Context.getLocationService().getDefaultLocation() + "|DISA*LAB|SGP|"
+		        + currentTimeStamp + "||chabeco_patient_demographic_data.hl7|"
+		        + "WEEKLY HL7 UPLOAD|00009972|\rBHS|^~\\&|XYZSYS|XYZ " + Context.getLocationService().getDefaultLocation()
+		        + "|DISA*LAB|SGP|" + currentTimeStamp + "||||00010223\r";
 		
 		// create the HL7 message
-		System.out.println("Creating ADT A04 message...");
-		List<ADT_A24> adtMessages = AdtMessageFactory.createMessage("A04", demographics);
-		
-		// create these parsers for file operations
-		//Parser pipeParser = context.getPipeParser();
-		//Parser xmlParser = context.getXMLParser();
+		System.out.println("Creating ADT A24 message...");
+		List<ADT_A24> adtMessages = AdtMessageFactory.createMessage("A24", demographics);
 		
 		PipeParser pipeParser = new PipeParser();
 		pipeParser.getParserConfiguration();
 		
 		// serialize the message to pipe delimited output file
-		writeMessageToFile(pipeParser, adtMessages, "chabeco_patient_metadata.txt");
-		
-		// serialize the message to XML format output file
-		//writeMessageToFile(xmlParser, adtMessages, "./src/main/resources/chabeco_patient_metadata.xml");
+		// TODO add date on the file name
+		writeMessageToFile(pipeParser, adtMessages, "chabeco_patient_demographic_data_"
+		        + Context.getLocationService().getLocationAttributeByUuid(Constants.LOCATION_ATTRIBUTE_UUID)
+		                .getValueReference() + "_" + Util.getCurrentTimeStamp() + ".hl7");
 	}
 	
-	private static void writeMessageToFile(Parser parser, List<ADT_A24> adtMessages, String outputFilename)
-	        throws IOException, FileNotFoundException, HL7Exception {
+	private void writeMessageToFile(Parser parser, List<ADT_A24> adtMessages, String outputFilename) throws IOException,
+	        FileNotFoundException, HL7Exception {
 		OutputStream outputStream = null;
 		try {
 			
@@ -75,23 +82,27 @@ public class Hl7SchedulerTask /*extends AbstractTask*/ {
 			// plain text editor
 			File file = new File(outputFilename);
 			
-			// quick check to create the file before writing if it does not exist already
-			if (!file.exists()) {
-				file.createNewFile();
-			}
+			file.createNewFile();
 			
 			System.out.println("Serializing message to file...");
 			outputStream = new FileOutputStream(file);
-						
+			
+			outputStream.write(headers.getBytes());
+			
 			for (ADT_A24 adt_A24 : adtMessages) {
 				outputStream.write(parser.encode(adt_A24).getBytes());
 				outputStream.write(System.getProperty("line.separator").getBytes());
 				outputStream.flush();
 			}
 			
+			footers = "BTS|" + String.valueOf(adtMessages.size()) + "\rFTS|1";
+			
+			outputStream.write(footers.getBytes());
+			
 			System.out.printf("Message serialized to file '%s' successfully", file);
 			System.out.println("\n");
-		} finally {
+		}
+		finally {
 			if (outputStream != null) {
 				outputStream.close();
 			}

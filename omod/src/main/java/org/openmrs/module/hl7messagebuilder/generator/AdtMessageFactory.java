@@ -16,7 +16,7 @@ public class AdtMessageFactory {
 	public static List<ADT_A24> createMessage(String messageType, List<PatientDemographic> demographics)
 	        throws HL7Exception, IOException {
 		
-		if (messageType.equals("A04")) {
+		if (messageType.equals("A24")) {
 			return new OurAdtA04MessageBuilder().Build(demographics);
 		}
 		

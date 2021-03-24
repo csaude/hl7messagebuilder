@@ -11,12 +11,12 @@ package org.openmrs.module.hl7messagebuilder;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.openmrs.module.BaseModuleActivator;
+import org.openmrs.module.ModuleActivator;
 
 /**
  * This class contains the logic that is run every time this module is either started or shutdown
  */
-public class Hl7messagebuilderActivator extends BaseModuleActivator {
+public class Hl7messagebuilderActivator implements ModuleActivator {
 	
 	private Log log = LogFactory.getLog(this.getClass());
 	
@@ -32,6 +32,36 @@ public class Hl7messagebuilderActivator extends BaseModuleActivator {
 	 */
 	public void shutdown() {
 		log.info("Shutdown Hl7messagebuilder");
+	}
+	
+	@Override
+	public void willRefreshContext() {
+		// TODO Auto-generated method stub
+		
+	}
+	
+	@Override
+	public void contextRefreshed() {
+		// TODO Auto-generated method stub
+		
+	}
+	
+	@Override
+	public void willStart() {
+		// TODO Auto-generated method stub
+		
+	}
+	
+	@Override
+	public void willStop() {
+		// TODO Auto-generated method stub
+		
+	}
+	
+	@Override
+	public void stopped() {
+		// TODO Auto-generated method stub
+		
 	}
 	
 }

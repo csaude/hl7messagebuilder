@@ -1,9 +1,12 @@
 package org.openmrs.module.hl7messagebuilder.api.model;
 
+import java.io.Serializable;
+
 /**
  * @author machabane
  */
-public class PatientDemographic {
+@SuppressWarnings("serial")
+public class PatientDemographic implements Serializable {
 	
 	private String pid;
 	
@@ -32,26 +35,6 @@ public class PatientDemographic {
 	private String maritalStatus;
 	
 	private String lastConsultation;
-	
-	public PatientDemographic(String pid, String gender, String birthDate, String givenName, String middleName,
-	    String familyName, String address, String stateProvince, String country, String countryDistrict, String telefone1,
-	    String telefone2, String maritalStatus, String lastConsultation) {
-		super();
-		this.pid = pid;
-		this.gender = gender;
-		this.birthDate = birthDate;
-		this.givenName = givenName;
-		this.middleName = middleName;
-		this.familyName = familyName;
-		this.address = address;
-		this.stateProvince = stateProvince;
-		this.country = country;
-		this.countryDistrict = countryDistrict;
-		this.telefone1 = telefone1;
-		this.telefone2 = telefone2;
-		this.maritalStatus = maritalStatus;
-		this.lastConsultation = lastConsultation;
-	}
 	
 	public String getPid() {
 		return pid;

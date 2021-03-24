@@ -12,7 +12,6 @@ package org.openmrs.module.hl7messagebuilder.api.impl;
 import java.util.List;
 
 import org.openmrs.api.APIException;
-import org.openmrs.api.UserService;
 import org.openmrs.api.impl.BaseOpenmrsService;
 import org.openmrs.module.hl7messagebuilder.api.Hl7messagebuilderService;
 import org.openmrs.module.hl7messagebuilder.api.db.Hl7messagebuilderDAO;
@@ -22,11 +21,10 @@ public class Hl7messagebuilderServiceImpl extends BaseOpenmrsService implements 
 	
 	Hl7messagebuilderDAO dao;
 	
-	UserService userService;
+	public Hl7messagebuilderDAO getDao() {
+		return dao;
+	}
 	
-	/**
-	 * Injected in moduleApplicationContext.xml
-	 */
 	public void setDao(Hl7messagebuilderDAO dao) {
 		this.dao = dao;
 	}
