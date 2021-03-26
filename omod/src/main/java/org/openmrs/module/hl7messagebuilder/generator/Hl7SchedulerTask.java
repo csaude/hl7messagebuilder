@@ -70,7 +70,7 @@ public class Hl7SchedulerTask extends AbstractTask {
 		// TODO add date on the file name
 		writeMessageToFile(pipeParser, adtMessages, "chabeco_patient_demographic_data_"
 		        + Context.getLocationService().getLocationAttributeByUuid(Constants.LOCATION_ATTRIBUTE_UUID)
-		                .getValueReference() + "_" + Util.getCurrentTimeStamp() + ".hl7");
+		                .getValueReference()+".hl7");
 	}
 	
 	private void writeMessageToFile(Parser parser, List<ADT_A24> adtMessages, String outputFilename) throws IOException,
