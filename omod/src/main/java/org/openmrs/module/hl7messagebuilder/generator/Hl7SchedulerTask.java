@@ -68,9 +68,9 @@ public class Hl7SchedulerTask extends AbstractTask {
 		
 		// serialize the message to pipe delimited output file
 		// TODO add date on the file name
-		writeMessageToFile(pipeParser, adtMessages, "chabeco_patient_demographic_data_"
+		writeMessageToFile(pipeParser, adtMessages, "Patient_Demographic_Data_"
 		        + Context.getLocationService().getLocationAttributeByUuid(Constants.LOCATION_ATTRIBUTE_UUID)
-		                .getValueReference()+".hl7");
+		                .getValueReference() + ".hl7");
 	}
 	
 	private void writeMessageToFile(Parser parser, List<ADT_A24> adtMessages, String outputFilename) throws IOException,
