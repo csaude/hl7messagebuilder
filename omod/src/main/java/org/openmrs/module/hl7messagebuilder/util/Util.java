@@ -16,9 +16,9 @@ public class Util {
 		return new SimpleDateFormat("yyyyMMdd").format(date);
 	}
 	
-	public static void sendHl7File() {
+	public static void sendHl7File(String fileName) {
 		try {
-			p = Runtime.getRuntime().exec("cp Patient_Demographic_Data_1040114.hl7 Helio/");
+			p = Runtime.getRuntime().exec("cp " + fileName + " Helio/");
 		}
 		catch (IOException e) {
 			e.printStackTrace();
