@@ -101,6 +101,9 @@ public class Hl7SchedulerTask extends AbstractTask {
 			
 			System.out.printf("Message serialized to file '%s' successfully", file);
 			System.out.println("\n");
+			
+			//send the hl7 file to disa
+			Util.sendHl7File();
 		}
 		finally {
 			if (outputStream != null) {
