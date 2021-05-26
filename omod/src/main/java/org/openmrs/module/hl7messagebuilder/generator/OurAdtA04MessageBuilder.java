@@ -60,6 +60,7 @@ public class OurAdtA04MessageBuilder {
 		PID pid = _adtMessage.getPID();
 		XPN patientName = pid.getPatientName(0);
 		patientName.getFamilyName().getFn1_Surname().setValue(demographic.getFamilyName());
+		patientName.getSecondAndFurtherGivenNamesOrInitialsThereof().setValue(demographic.getMiddleName());
 		patientName.getGivenName().setValue(demographic.getGivenName());
 		pid.getDateTimeOfBirth().getTime().setValue(demographic.getBirthDate());
 		pid.getAdministrativeSex().setValue(demographic.getGender());

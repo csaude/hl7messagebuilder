@@ -18,7 +18,6 @@ import org.hibernate.Query;
 import org.hibernate.SessionFactory;
 import org.openmrs.module.hl7messagebuilder.api.db.Hl7messagebuilderDAO;
 import org.openmrs.module.hl7messagebuilder.api.model.PatientDemographic;
-import org.openmrs.module.hl7messagebuilder.util.Util;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -74,7 +73,8 @@ public class Hl7messagebuilderDao implements Hl7messagebuilderDAO {
 		        + "	inner join" + "	(" + "		select patient_id,max(encounter_datetime) last_consultation"
 		        + "		from encounter" + "		where voided=0 and encounter_type = 6" + "		group by patient_id" + "	) e2"
 		        + "	where e1.patient_id=e2.patient_id and e1.encounter_datetime=e2.last_consultation "
-		        + ") e3 on e3.patient_id=p.patient_id" + " where p.voided=0 and pe.voided=0;";
+		        + ") e3 on e3.patient_id=p.patient_id"
+		        + " where p.voided=0 and pe.voided=0 AND LENGTH(pid.identifier) = 21;";
 		
 		final Query query = this.sessionFactory.getCurrentSession().createSQLQuery(sql);
 		List<Object[]> objs = query.list();

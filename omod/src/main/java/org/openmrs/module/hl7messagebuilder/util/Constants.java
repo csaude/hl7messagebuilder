@@ -5,6 +5,13 @@ package org.openmrs.module.hl7messagebuilder.util;
  */
 public class Constants {
 	
-	public static final String LOCATION_ATTRIBUTE_UUID = "8a3ac3b6-bb6a-46bc-9219-7ecd87b26fcf";
+	public static final String LOCATION_ATTRIBUTE_UUID = "hl7.sisma.location.attribute";
 	
+	public static final String DISA_IPADDRESS = "hl7.remote.ipaddress";
+	
+	public static final String DISA_USER = "hl7.remote.user";
+	
+	public static final String DISA_USERNAME = "hl7.remote.username";
+	
+	public static final String DISA_SHARED_FOLDER = "hl7.shared.folder";
 }

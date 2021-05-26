@@ -33,7 +33,11 @@ public class Hl7SchedulerTask extends AbstractTask {
 	
 	private List<PatientDemographic> demographics = new ArrayList<PatientDemographic>();
 	
+	private String locationAttributeUuid;
+	
 	public Hl7SchedulerTask() {
+		locationAttributeUuid = Context.getAdministrationService()
+		        .getGlobalPropertyObject(Constants.LOCATION_ATTRIBUTE_UUID).getPropertyValue();
 		hl7messagebuilderService = Context.getService(Hl7messagebuilderService.class);
 		demographics = hl7messagebuilderService.getPatientDemographicData();
 	}
@@ -67,10 +71,9 @@ public class Hl7SchedulerTask extends AbstractTask {
 		pipeParser.getParserConfiguration();
 		
 		// serialize the message to pipe delimited output file
-		// TODO add date on the file name
 		writeMessageToFile(pipeParser, adtMessages, "Patient_Demographic_Data_"
-		        + Context.getLocationService().getLocationAttributeByUuid(Constants.LOCATION_ATTRIBUTE_UUID)
-		                .getValueReference() + ".hl7");
+		        + Context.getLocationService().getLocationAttributeByUuid(locationAttributeUuid).getValueReference()
+		        + ".hl7");
 	}
 	
 	private void writeMessageToFile(Parser parser, List<ADT_A24> adtMessages, String outputFilename) throws IOException,
