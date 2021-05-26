@@ -14,4 +14,4 @@
 # Maven
 log/
 target/
-omod/target/**
+omod/target/
