@@ -36,10 +36,10 @@ public class Hl7messagebuilderDao implements Hl7messagebuilderDAO {
 		
 		String sql = "select REPLACE(REPLACE(pid.identifier, '\\r', ''), '\\n', ' ') pid,"
 		        + "		pe.gender,"
-		        + "		DATE_FORMAT(pe.birthdate,'%d/%m/%Y'),"
-		        + "		REPLACE(REPLACE(pn.given_name, '\\r', ''), '\\n', ' '),"
-		        + "		REPLACE(REPLACE(pn.middle_name, '\\r', ''), '\\n', ' '),"
-		        + "		REPLACE(REPLACE(pn.family_name, '\\r', ''), '\\n', ' '),"
+		        + "		pe.birthdate,"
+		        + "		REPLACE(REPLACE(pn.given_name, '\\r', ''), '\\n', ' ') given_name,"
+		        + "		REPLACE(REPLACE(pn.middle_name, '\\r', ''), '\\n', ' ') middle_name,"
+		        + "		REPLACE(REPLACE(pn.family_name, '\\r', ''), '\\n', ' ') family_name,"
 		        + "		CONCAT(trim(ifnull(pa.address1,'')),' ',trim(ifnull(pa.address2,'')),' ',trim(ifnull(pa.address3,'')),' ',trim(ifnull(pa.address6,'')),' ',trim(ifnull(pa.address5,''))) address,"
 		        + "		pa.state_province," + "		pa.country," + "		pa.county_district," + "		pat.value telefone1,"
 		        + "		pat1.value telefone2," + "		CASE pat2.value" + "   			WHEN 1057 THEN 'S'" + "   			WHEN 5555 THEN 'M'"
@@ -87,7 +87,7 @@ public class Hl7messagebuilderDao implements Hl7messagebuilderDAO {
 			PatientDemographic demographic = new PatientDemographic();
 			demographic.setPid((String) aux[0]);
 			demographic.setGender((String) aux[1]);
-			String birthDate = aux[2] == null ? "01" : new SimpleDateFormat("yyyyMMdd").format((Date) aux[2]);
+			String birthDate = aux[2] == null ? "01" : new SimpleDateFormat("dd/MM/yyyy").format((Date) aux[2]);
 			demographic.setBirthDate(birthDate);
 			demographic.setGivenName((String) aux[3]);
 			demographic.setMiddleName((String) aux[4]);
