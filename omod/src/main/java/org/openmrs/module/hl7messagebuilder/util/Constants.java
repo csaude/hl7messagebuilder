@@ -11,7 +11,7 @@ public class Constants {
 	
 	public static final String DISA_USER = "hl7.remote.user";
 	
-	public static final String DISA_USERNAME = "hl7.remote.username";
+	public static final String DISA_PASSWORD = "hl7.remote.password";
 	
 	public static final String DISA_SHARED_FOLDER = "hl7.shared.folder";
 }

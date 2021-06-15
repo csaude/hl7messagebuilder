@@ -43,6 +43,7 @@ public class Hl7SchedulerTask extends AbstractTask {
 	}
 	
 	public void execute() {
+		System.out.println("Hl7SchedulerTask started...");
 		try {
 			Context.openSession();
 			createHl7File();
@@ -51,6 +52,7 @@ public class Hl7SchedulerTask extends AbstractTask {
 		catch (Exception e) {
 			e.printStackTrace();
 		}
+		System.out.println("Hl7SchedulerTask ended...");
 	}
 	
 	private void createHl7File() throws HL7Exception, IOException {

@@ -19,11 +19,11 @@ public class Util {
 	}
 	
 	public static void sendHl7File(String fileName) {
-		System.out.println("sending Hl7 File to disa-link started...");
+		System.out.println("sending Hl7 File" + fileName + " to disa-link started...");
 		
 		try {
 			String hl7Cmd = "sshpass -p '"
-			        + Context.getAdministrationService().getGlobalPropertyObject(Constants.DISA_USERNAME).getPropertyValue()
+			        + Context.getAdministrationService().getGlobalPropertyObject(Constants.DISA_PASSWORD).getPropertyValue()
 			        + "' scp "
 			        + fileName
 			        + " "

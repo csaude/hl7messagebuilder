@@ -34,12 +34,12 @@ public class Hl7messagebuilderDao implements Hl7messagebuilderDAO {
 	@SuppressWarnings("unchecked")
 	public List<PatientDemographic> getPatientDemographicData() {
 		
-		String sql = "select REPLACE(REPLACE(pid.identifier, '\\r', ''), '\\n', ' ') pid,"
+		String sql = "select REPLACE(REPLACE(pid.identifier, '\r', ''), '\n', ' ') pid,"
 		        + "		pe.gender,"
 		        + "		pe.birthdate,"
-		        + "		REPLACE(REPLACE(pn.given_name, '\\r', ''), '\\n', ' ') given_name,"
-		        + "		REPLACE(REPLACE(pn.middle_name, '\\r', ''), '\\n', ' ') middle_name,"
-		        + "		REPLACE(REPLACE(pn.family_name, '\\r', ''), '\\n', ' ') family_name,"
+		        + "		REPLACE(REPLACE(pn.given_name, '\r', ''), '\n', ' ') given_name,"
+		        + "		REPLACE(REPLACE(pn.middle_name, '\r', ''), '\n', ' ') middle_name,"
+		        + "		REPLACE(REPLACE(pn.family_name, '\r', ''), '\n', ' ') family_name,"
 		        + "		CONCAT(trim(ifnull(pa.address1,'')),' ',trim(ifnull(pa.address2,'')),' ',trim(ifnull(pa.address3,'')),' ',trim(ifnull(pa.address6,'')),' ',trim(ifnull(pa.address5,''))) address,"
 		        + "		pa.state_province," + "		pa.country," + "		pa.county_district," + "		pat.value telefone1,"
 		        + "		pat1.value telefone2," + "		CASE pat2.value" + "   			WHEN 1057 THEN 'S'" + "   			WHEN 5555 THEN 'M'"
@@ -99,8 +99,11 @@ public class Hl7messagebuilderDao implements Hl7messagebuilderDAO {
 			demographic.setTelefone1((String) aux[10]);
 			demographic.setTelefone2((String) aux[11]);
 			demographic.setMaritalStatus((String) aux[12]);
-			String lastConsultation = aux[13] == null ? "01" : new SimpleDateFormat("yyyyMMdd").format((Date) aux[13]);
+			String lastConsultation = aux[13] == null ? "01" : new SimpleDateFormat("dd/MM/yyyy").format((Date) aux[13]);
 			demographic.setLastConsultation(lastConsultation);
+			
+			//don't allow duplicates on the list
+			
 			demographics.add(demographic);
 			
 		}
