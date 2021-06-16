@@ -31,7 +31,7 @@ public class Hl7SchedulerTask extends AbstractTask {
 	
 	private Hl7messagebuilderService hl7messagebuilderService;
 	
-	private List<PatientDemographic> demographics = new ArrayList<PatientDemographic>();
+	private List<PatientDemographic> demographics;
 	
 	private String locationAttributeUuid;
 	
@@ -39,7 +39,7 @@ public class Hl7SchedulerTask extends AbstractTask {
 		locationAttributeUuid = Context.getAdministrationService()
 		        .getGlobalPropertyObject(Constants.LOCATION_ATTRIBUTE_UUID).getPropertyValue();
 		hl7messagebuilderService = Context.getService(Hl7messagebuilderService.class);
-		demographics = hl7messagebuilderService.getPatientDemographicData();
+		demographics = new ArrayList<PatientDemographic>(hl7messagebuilderService.getPatientDemographicData());
 	}
 	
 	public void execute() {

@@ -18,6 +18,7 @@ import org.hibernate.Query;
 import org.hibernate.SessionFactory;
 import org.openmrs.module.hl7messagebuilder.api.db.Hl7messagebuilderDAO;
 import org.openmrs.module.hl7messagebuilder.api.model.PatientDemographic;
+import org.openmrs.module.hl7messagebuilder.util.HL7Util;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -102,12 +103,11 @@ public class Hl7messagebuilderDao implements Hl7messagebuilderDAO {
 			String lastConsultation = aux[13] == null ? "01" : new SimpleDateFormat("dd/MM/yyyy").format((Date) aux[13]);
 			demographic.setLastConsultation(lastConsultation);
 			
-			//don't allow duplicates on the list
-			
 			demographics.add(demographic);
-			
 		}
 		
-		return demographics;
+		List<PatientDemographic> clearedListFromDuplicateNid = HL7Util.clearListFromDuplicateNid(demographics);
+		
+		return clearedListFromDuplicateNid;
 	}
 }
