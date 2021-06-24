@@ -13,6 +13,7 @@
 	<description>Omod submodule for Hl7messagebuilder</description>
 
 	<dependencies>
+	
         <dependency>
             <groupId>org.openmrs.module</groupId>
             <artifactId>hl7messagebuilder-api</artifactId>
@@ -35,6 +36,13 @@
             <version>1.7.6</version>
             <scope>provided</scope>
         </dependency>
+        <dependency>
+			<groupId>org.openmrs.module</groupId>
+			<artifactId>legacyui-omod</artifactId>
+			<version>1.8.2</version>
+			<scope>provided</scope>
+		</dependency>
+        
 	</dependencies>
 	<build>
 		<finalName>${project.parent.artifactId}-${project.parent.version}</finalName>

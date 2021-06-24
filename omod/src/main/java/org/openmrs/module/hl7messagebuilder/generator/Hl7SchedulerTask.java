@@ -108,7 +108,7 @@ public class Hl7SchedulerTask extends AbstractTask {
 			System.out.println("\n");
 			
 			//send the hl7 file to disa
-			Util.sendHl7File(file.getName());
+			//Util.sendHl7File(file.getName());
 		}
 		finally {
 			if (outputStream != null) {
