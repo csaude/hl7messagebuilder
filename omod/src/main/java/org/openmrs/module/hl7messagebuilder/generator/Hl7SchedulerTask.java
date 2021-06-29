@@ -73,9 +73,7 @@ public class Hl7SchedulerTask extends AbstractTask {
 		pipeParser.getParserConfiguration();
 		
 		// serialize the message to pipe delimited output file
-		writeMessageToFile(pipeParser, adtMessages, "Patient_Demographic_Data_"
-		        + Context.getLocationService().getLocationAttributeByUuid(locationAttributeUuid).getValueReference()
-		        + ".hl7");
+		writeMessageToFile(pipeParser, adtMessages, "Patient_Demographic_Data.hl7");
 	}
 	
 	private void writeMessageToFile(Parser parser, List<ADT_A24> adtMessages, String outputFilename) throws IOException,
@@ -108,7 +106,7 @@ public class Hl7SchedulerTask extends AbstractTask {
 			System.out.println("\n");
 			
 			//send the hl7 file to disa
-			//Util.sendHl7File(file.getName());
+			Util.sendHl7File(file.getName());
 		}
 		finally {
 			if (outputStream != null) {
