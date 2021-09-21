@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
 import org.hibernate.Query;
 import org.hibernate.SessionFactory;
 import org.openmrs.module.hl7messagebuilder.api.db.Hl7messagebuilderDAO;
@@ -42,11 +43,15 @@ public class Hl7messagebuilderDao implements Hl7messagebuilderDAO {
 		        + "		REPLACE(REPLACE(pn.middle_name, '\r', ''), '\n', ' ') middle_name,"
 		        + "		REPLACE(REPLACE(pn.family_name, '\r', ''), '\n', ' ') family_name,"
 		        + "		REPLACE(REPLACE(CONCAT(TRIM(IFNULL(pa.address1, '')),' ',TRIM(IFNULL(pa.address2, '')),' ',TRIM(IFNULL(pa.address3, '')),' ',TRIM(IFNULL(pa.address6, '')),' ',TRIM(IFNULL(pa.address5, ''))), '\r', ''), '\n', ' ') address,"
-		        + "		REPLACE(REPLACE(pa.state_province, '\r', ''), '\n', ' ') state_province," + "		REPLACE(REPLACE(pa.country, '\r', ''), '\n', ' ') country," + "		REPLACE(REPLACE(pa.county_district, '\r', ''), '\n', ' ') county_district," + "		REPLACE(REPLACE(pat.value, '\r', ''), '\n', ' ') telefone1,"
-		        + "		REPLACE(REPLACE(pat1.value, '\r', ''), '\n', ' ') telefone2," + "		CASE pat2.value" + "   			WHEN 1057 THEN 'S'" + "   			WHEN 5555 THEN 'M'"
-		        + "   			WHEN 1060 THEN 'P'" + "   			WHEN 1059 THEN 'W'" + "   			WHEN 1056 THEN 'D'" + "   		ELSE 'T'"
-		        + "		END marital_status," + "		REPLACE(REPLACE(e3.encounter_datetime, '\r', ''), '\n', ' ') lastconsultation" + " from" + " person pe "
-		        + "inner join patient p on pe.person_id=p.patient_id" + " left join" + " (   select pid1.* "
+		        + "		REPLACE(REPLACE(pa.state_province, '\r', ''), '\n', ' ') state_province,"
+		        + "		REPLACE(REPLACE(pa.country, '\r', ''), '\n', ' ') country,"
+		        + "		REPLACE(REPLACE(pa.county_district, '\r', ''), '\n', ' ') county_district,"
+		        + "		REPLACE(REPLACE(pat.value, '\r', ''), '\n', ' ') telefone1,"
+		        + "		REPLACE(REPLACE(pat1.value, '\r', ''), '\n', ' ') telefone2," + "		CASE pat2.value"
+		        + "   			WHEN 1057 THEN 'S'" + "   			WHEN 5555 THEN 'M'" + "   			WHEN 1060 THEN 'P'"
+		        + "   			WHEN 1059 THEN 'W'" + "   			WHEN 1056 THEN 'D'" + "   		ELSE 'T'" + "		END marital_status,"
+		        + "		REPLACE(REPLACE(e3.encounter_datetime, '\r', ''), '\n', ' ') lastconsultation" + " from"
+		        + " person pe " + "inner join patient p on pe.person_id=p.patient_id" + " left join" + " (   select pid1.* "
 		        + "	from patient_identifier pid1" + "	inner join" + "	("
 		        + "		select patient_id,min(patient_identifier_id) id" + "		from patient_identifier"
 		        + "		where voided=0 and identifier_type=2" + "		group by patient_id" + "	) pid2"
@@ -88,7 +93,7 @@ public class Hl7messagebuilderDao implements Hl7messagebuilderDAO {
 			PatientDemographic demographic = new PatientDemographic();
 			demographic.setPid((String) aux[0]);
 			demographic.setGender((String) aux[1]);
-			String birthDate = aux[2] == null ? "01" : new SimpleDateFormat("dd/MM/yyyy").format((Date) aux[2]);
+			String birthDate = (aux[2] == null ? "01" : new SimpleDateFormat("dd/MM/yyyy").format((Date) aux[2]));
 			demographic.setBirthDate(birthDate);
 			demographic.setGivenName((String) aux[3]);
 			demographic.setMiddleName((String) aux[4]);
@@ -100,7 +105,7 @@ public class Hl7messagebuilderDao implements Hl7messagebuilderDAO {
 			demographic.setTelefone1((String) aux[10]);
 			demographic.setTelefone2((String) aux[11]);
 			demographic.setMaritalStatus((String) aux[12]);
-			String lastConsultation = aux[13] == null ? "01" : new SimpleDateFormat("dd/MM/yyyy").format((Date) aux[13]);
+			String lastConsultation = (String) (aux[13] == null ? "01" : aux[13]);
 			demographic.setLastConsultation(lastConsultation);
 			
 			demographics.add(demographic);
