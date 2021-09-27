@@ -104,7 +104,7 @@ public class Hl7messagebuilderDao implements Hl7messagebuilderDAO {
 			demographic.setTelefone1((String) aux[10]);
 			demographic.setTelefone2((String) aux[11]);
 			demographic.setMaritalStatus((String) aux[12]);
-			String lastConsultation = aux[13] == null ? "01" : new SimpleDateFormat("dd/MM/yyyy").format((Date) aux[13]);
+			String lastConsultation = (String) (aux[13] == null ? "01" : aux[13]);
 			demographic.setLastConsultation(lastConsultation);
 			
 			demographics.add(demographic);
