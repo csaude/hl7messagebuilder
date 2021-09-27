@@ -31,15 +31,15 @@ public class Hl7SchedulerTask extends AbstractTask {
 	
 	private Hl7messagebuilderService hl7messagebuilderService;
 	
-	private List<PatientDemographic> demographics;
+	//private List<PatientDemographic> demographics;
 	
 	private String locationAttributeUuid;
 	
 	public Hl7SchedulerTask() {
 		locationAttributeUuid = Context.getAdministrationService()
 		        .getGlobalPropertyObject(Constants.LOCATION_ATTRIBUTE_UUID).getPropertyValue();
-		hl7messagebuilderService = Context.getService(Hl7messagebuilderService.class);
-		demographics = new ArrayList<PatientDemographic>(hl7messagebuilderService.getPatientDemographicData());
+		//hl7messagebuilderService = Context.getService(Hl7messagebuilderService.class);
+		//demographics = new ArrayList<PatientDemographic>(hl7messagebuilderService.getPatientDemographicData());
 	}
 	
 	public void execute() {
@@ -57,6 +57,8 @@ public class Hl7SchedulerTask extends AbstractTask {
 	
 	private void createHl7File() throws HL7Exception, IOException {
 		
+		hl7messagebuilderService = Context.getService(Hl7messagebuilderService.class);
+		
 		String currentTimeStamp = Util.getCurrentTimeStamp();
 		
 		// prepare the headers
@@ -67,7 +69,8 @@ public class Hl7SchedulerTask extends AbstractTask {
 		
 		// create the HL7 message
 		System.out.println("Creating ADT A24 message...");
-		List<ADT_A24> adtMessages = AdtMessageFactory.createMessage("A24", demographics);
+		List<ADT_A24> adtMessages = AdtMessageFactory.createMessage("A24", new ArrayList<PatientDemographic>(
+		        hl7messagebuilderService.getPatientDemographicData()));
 		
 		PipeParser pipeParser = new PipeParser();
 		pipeParser.getParserConfiguration();
