@@ -28,13 +28,6 @@ public class Hl7SchedulerTask extends AbstractTask {
 	
 	private Hl7messagebuilderService hl7messagebuilderService;
 	
-	//private List<PatientDemographic> demographics;
-	
-	/*public Hl7SchedulerTask() {
-		hl7messagebuilderService = Context.getService(Hl7messagebuilderService.class);
-		demographics = new ArrayList<PatientDemographic>(hl7messagebuilderService.getPatientDemographicData());
-	}*/
-	
 	public void execute() {
 		System.out.println("Hl7SchedulerTask started...");
 		try {
@@ -62,7 +55,8 @@ public class Hl7SchedulerTask extends AbstractTask {
 		
 		// create the HL7 message
 		System.out.println("Creating ADT A24 message...");
-		List<ADT_A24> adtMessages = AdtMessageFactory.createMessage("A24", hl7messagebuilderService.getPatientDemographicData()); 
+		List<ADT_A24> adtMessages = AdtMessageFactory.createMessage("A24",
+		    hl7messagebuilderService.getPatientDemographicData());
 		
 		PipeParser pipeParser = new PipeParser();
 		pipeParser.getParserConfiguration();
