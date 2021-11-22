@@ -25,11 +25,13 @@ public class OurAdtA04MessageBuilder {
 	private ADT_A24 _adtMessage;
 	
 	public List<ADT_A24> Build(List<PatientDemographic> demographics) throws HL7Exception, IOException {
+		System.out.println(String.valueOf(demographics.size()) + " demographic items available");
 		
 		String currentDateTimeString = Util.getCurrentTimeStamp();
 		
 		List<ADT_A24> adt_A04s = new ArrayList<ADT_A24>();
 		
+		System.out.println("Iterating ADT A24 started...");
 		for (PatientDemographic demographic : demographics) {
 			_adtMessage = new ADT_A24();
 			_adtMessage.initQuickstart("ADT", "A24", "P");
@@ -38,6 +40,7 @@ public class OurAdtA04MessageBuilder {
 			createPv1Segment(demographic);
 			adt_A04s.add(_adtMessage);
 		}
+		System.out.println("Iterating ADT A24 ended...");
 		
 		return adt_A04s;
 	}
