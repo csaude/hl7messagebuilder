@@ -1,5 +1,6 @@
 package org.openmrs.module.hl7messagebuilder.api.db;
 
+import java.math.BigInteger;
 import java.util.List;
 
 import org.openmrs.api.APIException;
@@ -13,5 +14,7 @@ public interface Hl7messagebuilderDAO {
 	 * @return
 	 * @throws APIException
 	 */
-	public List<PatientDemographic> getPatientDemographicData() throws APIException;
+	public List<PatientDemographic> getPatientDemographicData(Integer maxId) throws APIException;
+	
+	public BigInteger getPatientDemographicSize();
 }

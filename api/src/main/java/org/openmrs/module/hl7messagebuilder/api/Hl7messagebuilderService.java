@@ -9,6 +9,7 @@
  */
 package org.openmrs.module.hl7messagebuilder.api;
 
+import java.math.BigInteger;
 import java.util.List;
 
 import org.openmrs.api.APIException;
@@ -27,5 +28,13 @@ public interface Hl7messagebuilderService extends OpenmrsService {
 	 * @return
 	 * @throws APIException
 	 */
-	public List<PatientDemographic> getPatientDemographicData() throws APIException;
+	public List<PatientDemographic> getPatientDemographicData(Integer maxId) throws APIException;
+	
+	/**
+	 * Gets the size of patient demographic data that is going to be used on the HL7 file
+	 * 
+	 * @return
+	 * @throws APIException
+	 */
+	public BigInteger getPatientDemographicSize() throws APIException;
 }

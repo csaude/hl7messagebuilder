@@ -9,6 +9,7 @@
  */
 package org.openmrs.module.hl7messagebuilder.api.impl;
 
+import java.math.BigInteger;
 import java.util.List;
 
 import org.openmrs.api.APIException;
@@ -30,7 +31,12 @@ public class Hl7messagebuilderServiceImpl extends BaseOpenmrsService implements 
 	}
 	
 	@Override
-	public List<PatientDemographic> getPatientDemographicData() throws APIException {
-		return dao.getPatientDemographicData();
+	public List<PatientDemographic> getPatientDemographicData(Integer maxId) throws APIException {
+		return dao.getPatientDemographicData(maxId);
+	}
+	
+	@Override
+	public BigInteger getPatientDemographicSize() throws APIException {
+		return dao.getPatientDemographicSize();
 	}
 }

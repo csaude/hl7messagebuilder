@@ -61,6 +61,8 @@ public class Hl7SchedulerTask extends AbstractTask {
 		
 		String currentTimeStamp = Util.getCurrentTimeStamp();
 		
+		Integer maxId = 0;
+		
 		// prepare the headers
 		headers = "FHS|^~\\&|XYZSYS|XYZ " + Context.getLocationService().getDefaultLocation() + "|DISA*LAB|SGP|"
 		        + currentTimeStamp + "||chabeco_patient_demographic_data.hl7|"
@@ -69,8 +71,10 @@ public class Hl7SchedulerTask extends AbstractTask {
 		
 		// create the HL7 message
 		System.out.println("Creating ADT A24 message...");
+		//BigInteger totalNumOfRecords = hl7messagebuilderService.getPatientDemographicSize();
+		
 		List<ADT_A24> adtMessages = AdtMessageFactory.createMessage("A24", new ArrayList<PatientDemographic>(
-		        hl7messagebuilderService.getPatientDemographicData()));
+		        hl7messagebuilderService.getPatientDemographicData(maxId)));
 		
 		PipeParser pipeParser = new PipeParser();
 		pipeParser.getParserConfiguration();
