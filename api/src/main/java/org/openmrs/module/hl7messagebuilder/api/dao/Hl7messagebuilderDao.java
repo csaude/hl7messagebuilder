@@ -112,6 +112,8 @@ public class Hl7messagebuilderDao implements Hl7messagebuilderDAO {
 		
 		List<PatientDemographic> clearedListFromDuplicateNid = HL7Util.clearListFromDuplicateNid(demographics);
 		
-		return clearedListFromDuplicateNid;
+		//demographics = null;
+		
+		return demographics;
 	}
 }

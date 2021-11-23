@@ -40,6 +40,7 @@ public class OurAdtA04MessageBuilder {
 			createPv1Segment(demographic);
 			adt_A04s.add(_adtMessage);
 		}
+		demographics = null;
 		System.out.println("Iterating ADT A24 ended...");
 		
 		return adt_A04s;

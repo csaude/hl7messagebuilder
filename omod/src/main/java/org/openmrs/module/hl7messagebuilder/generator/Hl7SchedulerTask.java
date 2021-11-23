@@ -101,6 +101,7 @@ public class Hl7SchedulerTask extends AbstractTask {
 			if (outputStream != null) {
 				outputStream.close();
 			}
+			adtMessages = null;
 		}
 	}
 }
