@@ -3,6 +3,7 @@ package org.openmrs.module.hl7messagebuilder.generator;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Logger;
 
 import org.openmrs.api.context.Context;
 import org.openmrs.module.hl7messagebuilder.api.model.PatientDemographic;
@@ -22,25 +23,37 @@ import ca.uhn.hl7v2.model.v25.segment.PV1;
  */
 public class OurAdtA04MessageBuilder {
 	
+	static Logger log = Logger.getLogger(OurAdtA04MessageBuilder.class.getName());
+	
 	private ADT_A24 _adtMessage;
 	
 	public List<ADT_A24> Build(List<PatientDemographic> demographics) throws HL7Exception, IOException {
-		System.out.println(String.valueOf(demographics.size()) + " demographic items available");
+		log.info(String.valueOf(demographics.size()) + " demographic items available");
 		
 		String currentDateTimeString = Util.getCurrentTimeStamp();
 		
 		List<ADT_A24> adt_A04s = new ArrayList<ADT_A24>();
 		
-		System.out.println("Iterating ADT A24 started...");
-		for (PatientDemographic demographic : demographics) {
+		log.info("Iterating ADT A24 started...");
+		System.out.println("Iteration started");
+		for (PatientDemographic patientDemographic : demographics) {
 			_adtMessage = new ADT_A24();
 			_adtMessage.initQuickstart("ADT", "A24", "P");
-			createMshSegment(currentDateTimeString, demographic);
-			createPidSegment(demographic);
-			createPv1Segment(demographic);
+			createMshSegment(currentDateTimeString, patientDemographic);
+			createPidSegment(patientDemographic);
+			createPv1Segment(patientDemographic);
 			adt_A04s.add(_adtMessage);
 		}
-		System.out.println("Iterating ADT A24 ended...");
+		log.info("Iterating ADT A24 ended...");
+		
+		/*
+		 * for (int i = 0; i < demographics.size(); i++) { PatientDemographic
+		 * patientDemographic = demographics.get(i); _adtMessage = new ADT_A24();
+		 * _adtMessage.initQuickstart("ADT", "A24", "P");
+		 * createMshSegment(currentDateTimeString, patientDemographic);
+		 * createPidSegment(patientDemographic); createPv1Segment(patientDemographic);
+		 * adt_A04s.add(_adtMessage); }
+		 */
 		
 		return adt_A04s;
 	}

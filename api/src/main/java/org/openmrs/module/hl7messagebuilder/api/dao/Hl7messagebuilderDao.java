@@ -11,20 +11,24 @@ package org.openmrs.module.hl7messagebuilder.api.dao;
 
 import java.math.BigInteger;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
+import java.util.logging.Logger;
 
 import org.hibernate.Query;
 import org.hibernate.SessionFactory;
 import org.openmrs.module.hl7messagebuilder.api.db.Hl7messagebuilderDAO;
 import org.openmrs.module.hl7messagebuilder.api.model.PatientDemographic;
-import org.openmrs.module.hl7messagebuilder.util.HL7Util;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 @Repository("hl7messagebuilder.Hl7messagebuilderDao")
 public class Hl7messagebuilderDao implements Hl7messagebuilderDAO {
+	
+	static Logger log = Logger.getLogger(Hl7messagebuilderDao.class.getName());
 	
 	private SessionFactory sessionFactory;
 	
@@ -35,9 +39,9 @@ public class Hl7messagebuilderDao implements Hl7messagebuilderDAO {
 	
 	@SuppressWarnings("unchecked")
 	public List<PatientDemographic> getPatientDemographicData(Integer maxId) {
+		log.info("getPatientDemographicData called...");
 		
 		String sql = "select REPLACE(REPLACE(pid.identifier, '\r', ''), '\n', ' ') pid,"
-		        + "     pe.person_id,"
 		        + "		pe.gender,"
 		        + "		pe.birthdate,"
 		        + "		REPLACE(REPLACE(pn.given_name, '\r', ''), '\n', ' ') given_name,"
@@ -51,9 +55,9 @@ public class Hl7messagebuilderDao implements Hl7messagebuilderDAO {
 		        + "		REPLACE(REPLACE(pat1.value, '\r', ''), '\n', ' ') telefone2," + "		CASE pat2.value"
 		        + "   			WHEN 1057 THEN 'S'" + "   			WHEN 5555 THEN 'M'" + "   			WHEN 1060 THEN 'P'"
 		        + "   			WHEN 1059 THEN 'W'" + "   			WHEN 1056 THEN 'D'" + "   		ELSE 'T'" + "		END marital_status,"
-		        + "		REPLACE(REPLACE(e3.encounter_datetime, '\r', ''), '\n', ' ') lastconsultation" + " from"
-		        + " person pe " + "inner join patient p on pe.person_id=p.patient_id" + " left join" + " (   select pid1.* "
-		        + "	from patient_identifier pid1" + "	inner join" + "	("
+		        + "		REPLACE(REPLACE(e3.encounter_datetime, '\r', ''), '\n', ' ') lastconsultation,"
+		        + "     pe.person_id from person pe " + "inner join patient p on pe.person_id=p.patient_id" + " left join"
+		        + " (   select pid1.* " + "	from patient_identifier pid1" + "	inner join" + "	("
 		        + "		select patient_id,min(patient_identifier_id) id" + "		from patient_identifier"
 		        + "		where voided=0 and identifier_type=2" + "		group by patient_id" + "	) pid2"
 		        + "	where pid1.patient_id=pid2.patient_id and pid1.patient_identifier_id=pid2.id "
@@ -81,14 +85,17 @@ public class Hl7messagebuilderDao implements Hl7messagebuilderDAO {
 		        + "		from encounter" + "		where voided=0 and encounter_type = 6" + "		group by patient_id" + "	) e2"
 		        + "	where e1.patient_id=e2.patient_id and e1.encounter_datetime=e2.last_consultation "
 		        + ") e3 on e3.patient_id=p.patient_id"
-		        + " where p.voided=0 and pe.voided=0 AND LENGTH(pid.identifier) = 21 LIMIT AND pe.person_id >" + maxId
-		        + "LIMIT 0,10;";
+		        + " where p.voided=0 and pe.voided=0 AND LENGTH(pid.identifier) = 21 AND pe.person_id > " + maxId
+		        + " ORDER BY pe.person_id ASC LIMIT 1000;";
 		
+		log.info("Querying list from database started...");
 		final Query query = this.sessionFactory.getCurrentSession().createSQLQuery(sql);
 		List<Object[]> objs = query.list();
+		log.info("Querying list from database ended...");
 		
-		List<PatientDemographic> demographics = new ArrayList<PatientDemographic>();
+		Map<String, PatientDemographic> noDuplicates = new HashMap<String, PatientDemographic>();
 		
+		log.info("adding objects from the database started...");
 		for (Object[] o : objs) {
 			
 			Object[] aux = o;
@@ -109,13 +116,13 @@ public class Hl7messagebuilderDao implements Hl7messagebuilderDAO {
 			demographic.setMaritalStatus((String) aux[12]);
 			String lastConsultation = (String) (aux[13] == null ? "01" : aux[13]);
 			demographic.setLastConsultation(lastConsultation);
+			demographic.setPersonId((Integer) aux[14]);
 			
-			demographics.add(demographic);
+			noDuplicates.put(demographic.getPid(), demographic);
 		}
+		log.info("adding objects from the database ended...");
 		
-		List<PatientDemographic> clearedListFromDuplicateNid = HL7Util.clearListFromDuplicateNid(demographics);
-		
-		return clearedListFromDuplicateNid;
+		return new LinkedList<PatientDemographic>(noDuplicates.values());
 	}
 	
 	@Override

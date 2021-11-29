@@ -36,6 +36,8 @@ public class PatientDemographic implements Serializable {
 	
 	private String lastConsultation;
 	
+	private Integer personId;
+	
 	public String getPid() {
 		return pid;
 	}
@@ -146,5 +148,13 @@ public class PatientDemographic implements Serializable {
 	
 	public void setLastConsultation(String lastConsultation) {
 		this.lastConsultation = lastConsultation;
+	}
+	
+	public Integer getPersonId() {
+		return personId;
+	}
+	
+	public void setPersonId(Integer personId) {
+		this.personId = personId;
 	}
 }

@@ -2,6 +2,7 @@ package org.openmrs.module.hl7messagebuilder.generator;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.logging.Logger;
 
 import org.openmrs.module.hl7messagebuilder.api.model.PatientDemographic;
 
@@ -13,9 +14,11 @@ import ca.uhn.hl7v2.model.v25.message.ADT_A24;
  */
 public class AdtMessageFactory {
 	
+	static Logger log = Logger.getLogger(AdtMessageFactory.class.getName());
+	
 	public static List<ADT_A24> createMessage(String messageType, List<PatientDemographic> demographics)
 	        throws HL7Exception, IOException {
-		System.out.println("createMessage called...");
+		log.info("createMessage called...");
 		
 		if (messageType.equals("A24")) {
 			return new OurAdtA04MessageBuilder().Build(demographics);
