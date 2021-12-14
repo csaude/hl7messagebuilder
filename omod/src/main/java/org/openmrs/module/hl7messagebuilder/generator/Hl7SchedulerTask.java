@@ -66,6 +66,7 @@ public class Hl7SchedulerTask extends AbstractTask {
 	}
 	
 	private void createHl7File() throws HL7Exception, IOException {
+		log.info("createHl7File called...");
 		
 		hl7messagebuilderService = Context.getService(Hl7messagebuilderService.class);
 		String currentTimeStamp = Util.getCurrentTimeStamp();
@@ -84,7 +85,7 @@ public class Hl7SchedulerTask extends AbstractTask {
 		totalNumOfRecords = new BigDecimal(hl7messagebuilderService.getPatientDemographicSize());
 		
 		// How many times I should go to the database
-		BigDecimal timesToTheDatabase = totalNumOfRecords.divide(new BigDecimal("1000"), 0, RoundingMode.CEILING);
+		BigDecimal timesToTheDatabase = totalNumOfRecords.divide(new BigDecimal("2000"), 0, RoundingMode.CEILING);
 		
 		PipeParser pipeParser = new PipeParser();
 		pipeParser.getParserConfiguration();
@@ -101,9 +102,7 @@ public class Hl7SchedulerTask extends AbstractTask {
 				List<ADT_A24> adtMessages = AdtMessageFactory.createMessage("A24", demographics);
 				
 				// serialize the message to pipe delimited output file
-				writeMessageToFile(pipeParser, adtMessages, "Patient_Demographic_Data_"
-				        + Context.getLocationService().getLocationAttributeByUuid(locationAttributeUuid).getValueReference()
-				        + ".hl7");
+				writeMessageToFile(pipeParser, adtMessages, "Patient_Demographic_Data.hl7");
 				
 				//set the new maxId
 				maxId = Collections.max(personLst);
@@ -113,11 +112,9 @@ public class Hl7SchedulerTask extends AbstractTask {
 				List<PatientDemographic> demographics = new LinkedList<PatientDemographic>(
 				        hl7messagebuilderService.getPatientDemographicData(maxId));
 				List<ADT_A24> adtMessages = AdtMessageFactory.createMessage("A24", demographics);
-				// serialize the message to pipe delimited output file
 				
-				writeMessageToFile(pipeParser, adtMessages, "Patient_Demographic_Data_"
-				        + Context.getLocationService().getLocationAttributeByUuid(locationAttributeUuid).getValueReference()
-				        + ".hl7");
+				// serialize the message to pipe delimited output file
+				writeMessageToFile(pipeParser, adtMessages, "Patient_Demographic_Data.hl7");
 				
 				for (PatientDemographic pD : demographics) {
 					personLst.add(pD.getPersonId());

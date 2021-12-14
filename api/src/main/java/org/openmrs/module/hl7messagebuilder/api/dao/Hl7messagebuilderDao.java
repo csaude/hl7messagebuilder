@@ -86,7 +86,7 @@ public class Hl7messagebuilderDao implements Hl7messagebuilderDAO {
 		        + "	where e1.patient_id=e2.patient_id and e1.encounter_datetime=e2.last_consultation "
 		        + ") e3 on e3.patient_id=p.patient_id"
 		        + " where p.voided=0 and pe.voided=0 AND LENGTH(pid.identifier) = 21 AND pe.person_id > " + maxId
-		        + " ORDER BY pe.person_id ASC LIMIT 1000;";
+		        + " ORDER BY pe.person_id ASC LIMIT 2000;";
 		
 		log.info("Querying list from database started...");
 		final Query query = this.sessionFactory.getCurrentSession().createSQLQuery(sql);
@@ -127,6 +127,7 @@ public class Hl7messagebuilderDao implements Hl7messagebuilderDAO {
 	
 	@Override
 	public BigInteger getPatientDemographicSize() {
+		log.info("getPatientDemographicSize called...");
 		
 		String sql = "select count(*) from" + " person pe " + "inner join patient p on pe.person_id=p.patient_id"
 		        + " left join" + " (   select pid1.* " + "	from patient_identifier pid1" + "	inner join" + "	("

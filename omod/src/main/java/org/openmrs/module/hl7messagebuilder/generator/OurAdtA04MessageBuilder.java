@@ -28,6 +28,7 @@ public class OurAdtA04MessageBuilder {
 	private ADT_A24 _adtMessage;
 	
 	public List<ADT_A24> Build(List<PatientDemographic> demographics) throws HL7Exception, IOException {
+		log.info("Build called...");
 		log.info(String.valueOf(demographics.size()) + " demographic items available");
 		
 		String currentDateTimeString = Util.getCurrentTimeStamp();
