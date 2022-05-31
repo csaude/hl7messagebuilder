@@ -7,6 +7,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
 import org.openmrs.module.hl7messagebuilder.api.model.PatientDemographic;
 
 public class HL7Util {
@@ -31,5 +32,11 @@ public class HL7Util {
 		List<PatientDemographic> clearedList = new ArrayList<PatientDemographic>(cleanMap.values());
 		
 		return clearedList;
+	}
+	
+	public static String listToString(List<String> locationsBySite) {
+		String locations = StringUtils.join(locationsBySite, "','");
+		locations = "'" + locations + "'";
+		return locations;
 	}
 }

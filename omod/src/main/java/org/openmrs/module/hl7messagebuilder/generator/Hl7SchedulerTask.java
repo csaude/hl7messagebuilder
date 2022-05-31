@@ -6,6 +6,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.List;
+import java.util.logging.Logger;
 
 import org.openmrs.api.context.Context;
 import org.openmrs.module.hl7messagebuilder.api.Hl7messagebuilderService;
@@ -22,6 +23,8 @@ import ca.uhn.hl7v2.parser.PipeParser;
  */
 public class Hl7SchedulerTask extends AbstractTask {
 	
+	static Logger log = Logger.getLogger(Hl7SchedulerTask.class.getName());
+	
 	private String headers;
 	
 	private String footers;
@@ -29,7 +32,7 @@ public class Hl7SchedulerTask extends AbstractTask {
 	private Hl7messagebuilderService hl7messagebuilderService;
 	
 	public void execute() {
-		System.out.println("Hl7SchedulerTask started...");
+		log.info("Hl7SchedulerTask started...");
 		try {
 			Context.openSession();
 			createHl7File();
@@ -38,10 +41,11 @@ public class Hl7SchedulerTask extends AbstractTask {
 		catch (Exception e) {
 			e.printStackTrace();
 		}
-		System.out.println("Hl7SchedulerTask ended...");
+		log.info("Hl7SchedulerTask ended...");
 	}
 	
 	private void createHl7File() throws HL7Exception, IOException {
+		log.info("createHl7File called...");
 		
 		String currentTimeStamp = Util.getCurrentTimeStamp();
 		
@@ -49,24 +53,32 @@ public class Hl7SchedulerTask extends AbstractTask {
 		
 		// prepare the headers
 		headers = "FHS|^~\\&|XYZSYS|XYZ " + Context.getLocationService().getDefaultLocation() + "|DISA*LAB|SGP|"
-		        + currentTimeStamp + "||chabeco_patient_demographic_data.hl7|"
+		        + currentTimeStamp + "||Patient_Demographic_Data.hl7|"
 		        + "WEEKLY HL7 UPLOAD|00009972|\rBHS|^~\\&|XYZSYS|XYZ " + Context.getLocationService().getDefaultLocation()
 		        + "|DISA*LAB|SGP|" + currentTimeStamp + "||||00010223\r";
 		
-		// create the HL7 message
-		System.out.println("Creating ADT A24 message...");
-		List<ADT_A24> adtMessages = AdtMessageFactory.createMessage("A24",
-		    hl7messagebuilderService.getPatientDemographicData());
+		List<String> sites = hl7messagebuilderService.getSites();
 		
-		PipeParser pipeParser = new PipeParser();
-		pipeParser.getParserConfiguration();
-		
-		// serialize the message to pipe delimited output file
-		writeMessageToFile(pipeParser, adtMessages, "Patient_Demographic_Data.hl7");
+		for (String site : sites) {
+			// query for each site
+			List<String> locationsBySite = hl7messagebuilderService.getLocationsBySite(site);
+			
+			// create the HL7 message
+			List<ADT_A24> adtMessages = AdtMessageFactory.createMessage("A24",
+			    hl7messagebuilderService.getPatientDemographicData(locationsBySite));
+			
+			PipeParser pipeParser = new PipeParser();
+			pipeParser.getParserConfiguration();
+			
+			// serialize the message to pipe delimited output file
+			writeMessageToFile(pipeParser, adtMessages, site + "_Patient_Demographic_Data.hl7");
+		}
 	}
 	
 	private void writeMessageToFile(Parser parser, List<ADT_A24> adtMessages, String outputFilename) throws IOException,
 	        FileNotFoundException, HL7Exception {
+		log.info("writeMessageToFile called...");
+		
 		OutputStream outputStream = null;
 		try {
 			
@@ -76,7 +88,7 @@ public class Hl7SchedulerTask extends AbstractTask {
 			
 			file.createNewFile();
 			
-			System.out.println("Serializing message to file...");
+			log.info("Serializing message to file...");
 			outputStream = new FileOutputStream(file);
 			
 			outputStream.write(headers.getBytes());

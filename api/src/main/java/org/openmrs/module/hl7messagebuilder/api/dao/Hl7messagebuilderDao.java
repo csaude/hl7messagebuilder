@@ -13,6 +13,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.logging.Logger;
 
 import org.hibernate.Query;
 import org.hibernate.SessionFactory;
@@ -25,7 +26,11 @@ import org.springframework.stereotype.Repository;
 @Repository("hl7messagebuilder.Hl7messagebuilderDao")
 public class Hl7messagebuilderDao implements Hl7messagebuilderDAO {
 	
+	static Logger log = Logger.getLogger(Hl7messagebuilderDao.class.getName());
+	
 	private SessionFactory sessionFactory;
+	
+	private String sql;
 	
 	@Autowired
 	public void setSessionFactory(SessionFactory sessionFactory) {
@@ -33,9 +38,10 @@ public class Hl7messagebuilderDao implements Hl7messagebuilderDAO {
 	}
 	
 	@SuppressWarnings("unchecked")
-	public List<PatientDemographic> getPatientDemographicData() {
+	public List<PatientDemographic> getPatientDemographicData(List<String> locationsBySite) {
+		log.info("getPatientDemographicData called...");
 		
-		String sql = "select REPLACE(REPLACE(pid.identifier, '\r', ''), '\n', ' ') pid,"
+		sql = "select REPLACE(REPLACE(pid.identifier, '\r', ''), '\n', ' ') pid,"
 		        + "		pe.gender,"
 		        + "		pe.birthdate,"
 		        + "		REPLACE(REPLACE(pn.given_name, '\r', ''), '\n', ' ') given_name,"
@@ -49,9 +55,8 @@ public class Hl7messagebuilderDao implements Hl7messagebuilderDAO {
 		        + "		REPLACE(REPLACE(pat1.value, '\r', ''), '\n', ' ') telefone2," + "		CASE pat2.value"
 		        + "   			WHEN 1057 THEN 'S'" + "   			WHEN 5555 THEN 'M'" + "   			WHEN 1060 THEN 'P'"
 		        + "   			WHEN 1059 THEN 'W'" + "   			WHEN 1056 THEN 'D'" + "   		ELSE 'T'" + "		END marital_status,"
-		        + "		e3.encounter_datetime lastconsultation" + " from" + " person pe "
-		        + "inner join patient p on pe.person_id=p.patient_id" + " left join" + " (   select pid1.* "
-		        + "	from patient_identifier pid1" + "	inner join" + "	("
+		        + "		pid.location_id" + " from" + " person pe " + "inner join patient p on pe.person_id=p.patient_id"
+		        + " left join" + " (   select pid1.* " + "	from patient_identifier pid1" + "	inner join" + "	("
 		        + "		select patient_id,min(patient_identifier_id) id" + "		from patient_identifier"
 		        + "		where voided=0 and identifier_type=2" + "		group by patient_id" + "	) pid2"
 		        + "	where pid1.patient_id=pid2.patient_id and pid1.patient_identifier_id=pid2.id "
@@ -74,15 +79,14 @@ public class Hl7messagebuilderDao implements Hl7messagebuilderDAO {
 		        + "	from person_attribute pat121" + "	inner join" + "	(" + "		select person_id,min(person_attribute_id) id"
 		        + "		from person_attribute " + "		where voided=0 and person_attribute_type_id = 5" + "		group by person_id"
 		        + "	) pat222" + "	where pat121.person_id=pat222.person_id and pat121.person_attribute_id=pat222.id "
-		        + ") pat2 on pat2.person_id=p.patient_id" + " left join" + " (	select e1.*" + "	from encounter e1"
-		        + "	inner join" + "	(" + "		select patient_id,max(encounter_datetime) last_consultation"
-		        + "		from encounter" + "		where voided=0 and encounter_type = 6" + "		group by patient_id" + "	) e2"
-		        + "	where e1.patient_id=e2.patient_id and e1.encounter_datetime=e2.last_consultation "
-		        + ") e3 on e3.patient_id=p.patient_id"
-		        + " where p.voided=0 and pe.voided=0 AND LENGTH(pid.identifier) = 21;";
+		        + ") pat2 on pat2.person_id=p.patient_id "
+		        + " where p.voided=0 and pe.voided=0 AND LENGTH(pid.identifier) = 21 AND pid.location_id IN ("
+		        + HL7Util.listToString(locationsBySite) + ") GROUP BY pid.identifier;";
 		
 		final Query query = this.sessionFactory.getCurrentSession().createSQLQuery(sql);
+		log.info("Querying list from database ended...");
 		List<Object[]> objs = query.list();
+		log.info("Querying list from database ended...");
 		
 		List<PatientDemographic> demographics = new ArrayList<PatientDemographic>();
 		
@@ -92,7 +96,7 @@ public class Hl7messagebuilderDao implements Hl7messagebuilderDAO {
 			PatientDemographic demographic = new PatientDemographic();
 			demographic.setPid((String) aux[0]);
 			demographic.setGender((String) aux[1]);
-			String birthDate = aux[2] == null ? "01" : new SimpleDateFormat("dd/MM/yyyy").format((Date) aux[2]);
+			String birthDate = aux[2] == null ? "01" : new SimpleDateFormat("yyyyMMdd").format((Date) aux[2]);
 			demographic.setBirthDate(birthDate);
 			demographic.setGivenName((String) aux[3]);
 			demographic.setMiddleName((String) aux[4]);
@@ -104,16 +108,45 @@ public class Hl7messagebuilderDao implements Hl7messagebuilderDAO {
 			demographic.setTelefone1((String) aux[10]);
 			demographic.setTelefone2((String) aux[11]);
 			demographic.setMaritalStatus((String) aux[12]);
-			String lastConsultation = aux[13] == null ? "01" : new SimpleDateFormat("dd/MM/yyyy").format((Date) aux[13]);
-			demographic.setLastConsultation(lastConsultation);
 			
 			demographics.add(demographic);
 		}
-		
-		List<PatientDemographic> clearedListFromDuplicateNid = HL7Util.clearListFromDuplicateNid(demographics);
-		
-		//demographics = null;
+		log.info("adding objects from the database ended...");
 		
 		return demographics;
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<String> getSites() {
+		log.info("getSites called...");
+		
+		sql = "SELECT DISTINCT(location_name) from disa_mapping_sites WHERE active = '1';";
+		final Query query = this.sessionFactory.getCurrentSession().createSQLQuery(sql);
+		List<Object> objs = query.list();
+		List<String> openmrsSites = new ArrayList<String>();
+		
+		for (Object aux : objs) {
+			openmrsSites.add((String) aux);
+		}
+		
+		return openmrsSites;
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<String> getLocationsBySite(String site) {
+		log.info("getLocationsBySite called...");
+		
+		sql = "SELECT location_id FROM disa_mapping_sites WHERE location_name = '" + site + "' AND active = '1';";
+		final Query query = this.sessionFactory.getCurrentSession().createSQLQuery(sql);
+		List<Object> objs = query.list();
+		List<String> locations = new ArrayList<String>();
+		
+		for (Object aux : objs) {
+			locations.add((String) aux);
+		}
+		
+		return locations;
 	}
 }

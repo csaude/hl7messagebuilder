@@ -3,6 +3,7 @@ package org.openmrs.module.hl7messagebuilder.generator;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Logger;
 
 import org.openmrs.api.context.Context;
 import org.openmrs.module.hl7messagebuilder.api.model.PatientDemographic;
@@ -22,16 +23,17 @@ import ca.uhn.hl7v2.model.v25.segment.PV1;
  */
 public class OurAdtA04MessageBuilder {
 	
+	static Logger log = Logger.getLogger(OurAdtA04MessageBuilder.class.getName());
+	
 	private ADT_A24 _adtMessage;
 	
 	public List<ADT_A24> Build(List<PatientDemographic> demographics) throws HL7Exception, IOException {
-		System.out.println(String.valueOf(demographics.size()) + " demographic items available");
 		
 		String currentDateTimeString = Util.getCurrentTimeStamp();
 		
 		List<ADT_A24> adt_A04s = new ArrayList<ADT_A24>();
 		
-		System.out.println("Iterating ADT A24 started...");
+		log.info("Iterating ADT A24 started...");
 		for (PatientDemographic demographic : demographics) {
 			_adtMessage = new ADT_A24();
 			_adtMessage.initQuickstart("ADT", "A24", "P");
@@ -41,7 +43,7 @@ public class OurAdtA04MessageBuilder {
 			adt_A04s.add(_adtMessage);
 		}
 		demographics = null;
-		System.out.println("Iterating ADT A24 ended...");
+		log.info("Iterating ADT A24 ended...");
 		
 		return adt_A04s;
 	}
@@ -84,13 +86,11 @@ public class OurAdtA04MessageBuilder {
 		pv1.getAssignedPatientLocation().getPl9_LocationDescription()
 		        .setValue(Context.getLocationService().getDefaultLocation().getDescription());
 		pv1.getAdmissionType().setValue("R");
-		pv1.getAdmitDateTime().getTime().setValue(demographic.getLastConsultation());
-		
+		pv1.getAdmitDateTime().getTime().setValue("");
 	}
 	
 	private String getSequenceNumber() {
 		String facilityNumberPrefix = Context.getLocationService().getDefaultLocation().getLocationId().toString();
 		return facilityNumberPrefix.concat(Util.getCurrentTimeStamp());
-		
 	}
 }

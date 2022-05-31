@@ -24,8 +24,13 @@ public interface Hl7messagebuilderService extends OpenmrsService {
 	/**
 	 * Gets patient demographic data that is going to be used to produce the HL7 file
 	 * 
+	 * @param locationsBySite
 	 * @return
 	 * @throws APIException
 	 */
-	public List<PatientDemographic> getPatientDemographicData() throws APIException;
+	public List<PatientDemographic> getPatientDemographicData(List<String> locationsBySite) throws APIException;
+	
+	public List<String> getSites();
+	
+	public List<String> getLocationsBySite(String site);
 }

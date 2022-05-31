@@ -13,5 +13,9 @@ public interface Hl7messagebuilderDAO {
 	 * @return
 	 * @throws APIException
 	 */
-	public List<PatientDemographic> getPatientDemographicData() throws APIException;
+	public List<PatientDemographic> getPatientDemographicData(List<String> locationsBySite) throws APIException;
+	
+	public List<String> getSites();
+	
+	public List<String> getLocationsBySite(String site);
 }
