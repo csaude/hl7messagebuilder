@@ -13,5 +13,5 @@ public class Constants {
 	
 	public static final String DISA_PASSWORD = "hl7.remote.password";
 	
-	public static final String DISA_SHARED_FOLDER = "hl7.shared.folder";
+	public static final String HL7_DOCKER_FOLDER = "hl7.docker.folder";
 }

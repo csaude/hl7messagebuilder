@@ -10,6 +10,7 @@ import java.util.logging.Logger;
 
 import org.openmrs.api.context.Context;
 import org.openmrs.module.hl7messagebuilder.api.Hl7messagebuilderService;
+import org.openmrs.module.hl7messagebuilder.util.Constants;
 import org.openmrs.module.hl7messagebuilder.util.Util;
 import org.openmrs.scheduler.tasks.AbstractTask;
 
@@ -84,7 +85,9 @@ public class Hl7SchedulerTask extends AbstractTask {
 			
 			// Remember that the file may not show special delimiter characters when using
 			// plain text editor
-			File file = new File("/usr/local/tomcat/.OpenMRS/hl7/" + outputFilename);
+			File file = new File(Context.getAdministrationService().getGlobalPropertyObject(Constants.HL7_DOCKER_FOLDER)
+			        .getPropertyValue()
+			        + outputFilename);
 			
 			file.createNewFile();
 			

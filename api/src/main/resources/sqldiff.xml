@@ -28,7 +28,7 @@
 			) ENGINE=InnoDB AUTO_INCREMENT=187 DEFAULT CHARSET=utf8;
 				
 			INSERT INTO global_property VALUES 
-			('hl7.sisma.location.attribute', '8a3ac3b6-bb6a-46bc-9219-7ecd87b26fcf', 'sisma code location attribute', '2686097c-871b-11e9-898c-0242ac124442', NULL, NULL, NULL, NULL, NULL, NULL);
+			('hl7.docker.folder', '/usr/local/tomcat/.OpenMRS/hl7/', 'hl7 location folder on tomcat container', '2686097c-871b-11e9-898c-0242ac121112', NULL, NULL, NULL, NULL, NULL, NULL);
 		</sql>
 	</diff>
 	
