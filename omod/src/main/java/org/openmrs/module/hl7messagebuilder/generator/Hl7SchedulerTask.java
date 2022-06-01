@@ -84,7 +84,7 @@ public class Hl7SchedulerTask extends AbstractTask {
 			
 			// Remember that the file may not show special delimiter characters when using
 			// plain text editor
-			File file = new File(outputFilename);
+			File file = new File("/usr/local/tomcat/.OpenMRS/hl7/" + outputFilename);
 			
 			file.createNewFile();
 			

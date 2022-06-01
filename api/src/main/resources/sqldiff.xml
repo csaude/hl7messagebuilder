@@ -19,12 +19,16 @@
 		<date></date>
 		<description>HL7 configuration data</description>
 		<sql>
+			CREATE TABLE IF NOT EXISTS `disa_mapping_sites` (
+			  `id` int(11) NOT NULL AUTO_INCREMENT,
+			  `location_name` varchar(45) DEFAULT NULL,
+			  `location_id` varchar(45) DEFAULT NULL,
+			  `active` varchar(1) NOT NULL DEFAULT '0',
+			  PRIMARY KEY (`id`)
+			) ENGINE=InnoDB AUTO_INCREMENT=187 DEFAULT CHARSET=utf8;
+				
 			INSERT INTO global_property VALUES 
-			('hl7.remote.ipaddress', '192.168.88.241', 'disa-link ip', '2686097c-871b-11e9-898c-0242ac121112', NULL, NULL, NULL, NULL, NULL, NULL),
-			('hl7.remote.user', 'Cacy', 'disa-link user', '2686097c-871b-11e9-898c-0242ac123332', NULL, NULL, NULL, NULL, NULL, NULL),
-			('hl7.remote.password', 'cacy123', 'disa-link username', '2686097c-871b-11e9-898c-0242ac126662', NULL, NULL, NULL, NULL, NULL, NULL),
-			('hl7.sisma.location.attribute', '8a3ac3b6-bb6a-46bc-9219-7ecd87b26fcf', 'sisma code location attribute', '2686097c-871b-11e9-898c-0242ac124442', NULL, NULL, NULL, NULL, NULL, NULL),
-			('hl7.shared.folder', ':/C:/FTP/Disa/HL7', 'disa-link shared folder', '2686097c-871b-11e9-898c-0242ac125552', NULL, NULL, NULL, NULL, NULL, NULL);
+			('hl7.sisma.location.attribute', '8a3ac3b6-bb6a-46bc-9219-7ecd87b26fcf', 'sisma code location attribute', '2686097c-871b-11e9-898c-0242ac124442', NULL, NULL, NULL, NULL, NULL, NULL);
 		</sql>
 	</diff>
 	
