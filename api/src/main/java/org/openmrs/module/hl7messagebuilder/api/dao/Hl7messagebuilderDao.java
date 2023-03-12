@@ -84,7 +84,7 @@ public class Hl7messagebuilderDao implements Hl7messagebuilderDAO {
 		        + " where p.voided=0 and pe.voided=0 AND LENGTH(pid.identifier) = 21 AND pid.lUuid = '" + locationsByUuid
 		        + "' GROUP BY pid.identifier;";
 		
-		log.info("query..." + sql);
+		//log.info("query..." + sql);
 		
 		final Query query = this.sessionFactory.getCurrentSession().createSQLQuery(sql);
 		log.info("Querying list from database ended...");
