@@ -30,8 +30,8 @@ public class Hl7messagebuilderServiceImpl extends BaseOpenmrsService implements 
 	}
 	
 	@Override
-	public List<PatientDemographic> getPatientDemographicData(List<String> locationsBySite) throws APIException {
-		return dao.getPatientDemographicData(locationsBySite);
+	public List<PatientDemographic> getPatientDemographicData(String locationsByUuid) throws APIException {
+		return dao.getPatientDemographicData(locationsByUuid);
 	}
 	
 	@Override
@@ -42,5 +42,10 @@ public class Hl7messagebuilderServiceImpl extends BaseOpenmrsService implements 
 	@Override
 	public List<String> getLocationsBySite(String site) {
 		return dao.getLocationsBySite(site);
+	}
+
+	@Override
+	public List<String> getLocationsByUuid() {
+		return dao.getLocationsByUuid(); 
 	}
 }

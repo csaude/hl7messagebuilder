@@ -19,7 +19,6 @@ import org.hibernate.Query;
 import org.hibernate.SessionFactory;
 import org.openmrs.module.hl7messagebuilder.api.db.Hl7messagebuilderDAO;
 import org.openmrs.module.hl7messagebuilder.api.model.PatientDemographic;
-import org.openmrs.module.hl7messagebuilder.util.HL7Util;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -38,7 +37,7 @@ public class Hl7messagebuilderDao implements Hl7messagebuilderDAO {
 	}
 	
 	@SuppressWarnings("unchecked")
-	public List<PatientDemographic> getPatientDemographicData(List<String> locationsBySite) {
+	public List<PatientDemographic> getPatientDemographicData(String locationsByUuid) {
 		log.info("getPatientDemographicData called...");
 		
 		sql = "select REPLACE(REPLACE(pid.identifier, '\r', ''), '\n', ' ') pid,"
@@ -56,9 +55,9 @@ public class Hl7messagebuilderDao implements Hl7messagebuilderDAO {
 		        + "   			WHEN 1057 THEN 'S'" + "   			WHEN 5555 THEN 'M'" + "   			WHEN 1060 THEN 'P'"
 		        + "   			WHEN 1059 THEN 'W'" + "   			WHEN 1056 THEN 'D'" + "   		ELSE 'T'" + "		END marital_status,"
 		        + "		pid.location_id" + " from" + " person pe " + "inner join patient p on pe.person_id=p.patient_id"
-		        + " left join" + " (   select pid1.* " + "	from patient_identifier pid1" + "	inner join" + "	("
-		        + "		select patient_id,min(patient_identifier_id) id" + "		from patient_identifier"
-		        + "		where voided=0 and identifier_type=2" + "		group by patient_id" + "	) pid2"
+		        + " left join" + " (   select pid1.* " + ", pid2.lUuid lUuid from patient_identifier pid1" + "	inner join" + "	("
+		        + "		select patient_id,min(patient_identifier_id) id, l.uuid lUuid" + "		from patient_identifier pi inner join location l on l.location_id = pi.location_id "
+		        + "		where pi.voided=0 and pi.identifier_type=2 and l.retired=0 " + "		group by patient_id" + "	) pid2"
 		        + "	where pid1.patient_id=pid2.patient_id and pid1.patient_identifier_id=pid2.id "
 		        + ") pid on pid.patient_id=p.patient_id" + " left join" + " (	select pn1.*" + "	from person_name pn1"
 		        + "	inner join" + "	(" + "		select person_id,min(person_name_id) id" + "		from person_name"
@@ -80,8 +79,8 @@ public class Hl7messagebuilderDao implements Hl7messagebuilderDAO {
 		        + "		from person_attribute " + "		where voided=0 and person_attribute_type_id = 5" + "		group by person_id"
 		        + "	) pat222" + "	where pat121.person_id=pat222.person_id and pat121.person_attribute_id=pat222.id "
 		        + ") pat2 on pat2.person_id=p.patient_id "
-		        + " where p.voided=0 and pe.voided=0 AND LENGTH(pid.identifier) = 21 AND pid.location_id IN ("
-		        + HL7Util.listToString(locationsBySite) + ") GROUP BY pid.identifier;";
+		        + " where p.voided=0 and pe.voided=0 AND LENGTH(pid.identifier) = 21 AND pid.location_id = "
+		        + locationsByUuid + " GROUP BY pid.identifier;";
 		
 		log.info("query..." + sql);
 		
@@ -141,6 +140,23 @@ public class Hl7messagebuilderDao implements Hl7messagebuilderDAO {
 		log.info("getLocationsBySite called...");
 		
 		sql = "SELECT location_id FROM disa_mapping_sites WHERE location_name = '" + site + "' AND active = '1';";
+		final Query query = this.sessionFactory.getCurrentSession().createSQLQuery(sql);
+		List<Object> objs = query.list();
+		List<String> locations = new ArrayList<String>();
+		
+		for (Object aux : objs) {
+			locations.add((String) aux);
+		}
+		
+		return locations;
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<String> getLocationsByUuid() {
+		log.info("getLocationsBySite called...");
+		
+		sql = "SELECT uuid FROM disa_mapping_sites_uuid WHERE AND active = '1';";
 		final Query query = this.sessionFactory.getCurrentSession().createSQLQuery(sql);
 		List<Object> objs = query.list();
 		List<String> locations = new ArrayList<String>();

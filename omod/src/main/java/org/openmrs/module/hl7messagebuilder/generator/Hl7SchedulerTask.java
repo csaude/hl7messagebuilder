@@ -58,21 +58,19 @@ public class Hl7SchedulerTask extends AbstractTask {
 		        + "WEEKLY HL7 UPLOAD|00009972|\rBHS|^~\\&|XYZSYS|XYZ " + Context.getLocationService().getDefaultLocation()
 		        + "|DISA*LAB|SGP|" + currentTimeStamp + "||||00010223\r";
 		
-		List<String> sites = hl7messagebuilderService.getSites();
+		List<String> sitesByUuid = hl7messagebuilderService.getLocationsByUuid();
 		
-		for (String site : sites) {
-			// query for each site
-			List<String> locationsBySite = hl7messagebuilderService.getLocationsBySite(site);
+		for (String site : sitesByUuid) {
 			
 			// create the HL7 message
 			List<ADT_A24> adtMessages = AdtMessageFactory.createMessage("A24",
-			    hl7messagebuilderService.getPatientDemographicData(locationsBySite));
+			    hl7messagebuilderService.getPatientDemographicData(site));
 			
 			PipeParser pipeParser = new PipeParser();
 			pipeParser.getParserConfiguration();
 			
 			// serialize the message to pipe delimited output file
-			writeMessageToFile(pipeParser, adtMessages, site + "_Patient_Demographic_Data.hl7");
+			writeMessageToFile(pipeParser, adtMessages, site + ".hl7");
 		}
 	}
 	
