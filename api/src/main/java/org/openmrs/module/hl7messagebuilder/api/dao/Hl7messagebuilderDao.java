@@ -54,10 +54,9 @@ public class Hl7messagebuilderDao implements Hl7messagebuilderDAO {
 		        + "		REPLACE(REPLACE(pat1.value, '\r', ''), '\n', ' ') telefone2," + "		CASE pat2.value"
 		        + "   			WHEN 1057 THEN 'S'" + "   			WHEN 5555 THEN 'M'" + "   			WHEN 1060 THEN 'P'"
 		        + "   			WHEN 1059 THEN 'W'" + "   			WHEN 1056 THEN 'D'" + "   		ELSE 'T'" + "		END marital_status,"
-		        + "		pid.location_id" + " from" + " person pe " + "inner join patient p on pe.person_id=p.patient_id"
-		        + " left join" + " (   select pid1.* " + ", pid2.lUuid lUuid from patient_identifier pid1" + "	inner join"
-		        + "	(" + "		select patient_id,min(patient_identifier_id) id, l.uuid lUuid"
-		        + "		from patient_identifier pi inner join location l on l.location_id = pi.location_id "
+		        + "		pid.location_id, pid.lUuid uuid" + " from" + " person pe " + "inner join patient p on pe.person_id=p.patient_id"
+		        + " left join" + " (   select pid1.* " + ", pid2.lUuid lUuid from patient_identifier pid1" + "	inner join" + "	("
+		        + "		select patient_id,min(patient_identifier_id) id, l.uuid lUuid" + "		from patient_identifier pi inner join location l on l.location_id = pi.location_id "
 		        + "		where pi.voided=0 and pi.identifier_type=2 and l.retired=0 " + "		group by patient_id" + "	) pid2"
 		        + "	where pid1.patient_id=pid2.patient_id and pid1.patient_identifier_id=pid2.id "
 		        + ") pid on pid.patient_id=p.patient_id" + " left join" + " (	select pn1.*" + "	from person_name pn1"
@@ -80,7 +79,7 @@ public class Hl7messagebuilderDao implements Hl7messagebuilderDAO {
 		        + "		from person_attribute " + "		where voided=0 and person_attribute_type_id = 5" + "		group by person_id"
 		        + "	) pat222" + "	where pat121.person_id=pat222.person_id and pat121.person_attribute_id=pat222.id "
 		        + ") pat2 on pat2.person_id=p.patient_id "
-		        + " where p.voided=0 and pe.voided=0 AND LENGTH(pid.identifier) = 21 AND pid.location_id = "
+		        + " where p.voided=0 and pe.voided=0 AND LENGTH(pid.identifier) = 21 AND pid.lUuid = "
 		        + locationsByUuid + " GROUP BY pid.identifier;";
 		
 		log.info("query..." + sql);
