@@ -43,9 +43,9 @@ public class Hl7messagebuilderServiceImpl extends BaseOpenmrsService implements 
 	public List<String> getLocationsBySite(String site) {
 		return dao.getLocationsBySite(site);
 	}
-
+	
 	@Override
 	public List<String> getLocationsByUuid() {
-		return dao.getLocationsByUuid(); 
+		return dao.getLocationsByUuid();
 	}
 }

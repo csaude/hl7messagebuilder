@@ -18,6 +18,6 @@ public interface Hl7messagebuilderDAO {
 	public List<String> getSites();
 	
 	public List<String> getLocationsBySite(String site);
-
+	
 	public List<String> getLocationsByUuid();
 }

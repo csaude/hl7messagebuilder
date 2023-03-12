@@ -55,8 +55,9 @@ public class Hl7messagebuilderDao implements Hl7messagebuilderDAO {
 		        + "   			WHEN 1057 THEN 'S'" + "   			WHEN 5555 THEN 'M'" + "   			WHEN 1060 THEN 'P'"
 		        + "   			WHEN 1059 THEN 'W'" + "   			WHEN 1056 THEN 'D'" + "   		ELSE 'T'" + "		END marital_status,"
 		        + "		pid.location_id" + " from" + " person pe " + "inner join patient p on pe.person_id=p.patient_id"
-		        + " left join" + " (   select pid1.* " + ", pid2.lUuid lUuid from patient_identifier pid1" + "	inner join" + "	("
-		        + "		select patient_id,min(patient_identifier_id) id, l.uuid lUuid" + "		from patient_identifier pi inner join location l on l.location_id = pi.location_id "
+		        + " left join" + " (   select pid1.* " + ", pid2.lUuid lUuid from patient_identifier pid1" + "	inner join"
+		        + "	(" + "		select patient_id,min(patient_identifier_id) id, l.uuid lUuid"
+		        + "		from patient_identifier pi inner join location l on l.location_id = pi.location_id "
 		        + "		where pi.voided=0 and pi.identifier_type=2 and l.retired=0 " + "		group by patient_id" + "	) pid2"
 		        + "	where pid1.patient_id=pid2.patient_id and pid1.patient_identifier_id=pid2.id "
 		        + ") pid on pid.patient_id=p.patient_id" + " left join" + " (	select pn1.*" + "	from person_name pn1"
@@ -156,7 +157,7 @@ public class Hl7messagebuilderDao implements Hl7messagebuilderDAO {
 	public List<String> getLocationsByUuid() {
 		log.info("getLocationsBySite called...");
 		
-		sql = "SELECT uuid FROM disa_mapping_sites_uuid WHERE AND active = '1';";
+		sql = "SELECT uuid FROM disa_mapping_sites_uuid WHERE active = '1';";
 		final Query query = this.sessionFactory.getCurrentSession().createSQLQuery(sql);
 		List<Object> objs = query.list();
 		List<String> locations = new ArrayList<String>();
